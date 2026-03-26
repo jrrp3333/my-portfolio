@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Works | JRRProjects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;500&family=Syne+Mono&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0a0a09;
+      --green: #244d29;
+      --surface: #161614;
+      --border: rgba(255,255,255,0.08);
+      --mid: #c5c5af;
+      --light: #c8c4b8;
+      --white: #f0ede8;
+      --sand: #c4a882;
+      --teal: #5c9e94;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 0%, rgba(92,158,148,0.13) 0%, transparent 45%), var(--green);
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    a { color: inherit; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(10,10,9,0.9) 0%, rgba(10,10,9,0.7) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      text-decoration: none;
+      font-family: 'Syne Mono', monospace;
+      letter-spacing: 0.18em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mid);
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--white);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    main {
+      position: relative;
+      z-index: 10;
+      padding: 3rem 2rem 4rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .hero-label {
+      font-family: 'Syne Mono', monospace;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--teal);
+      font-size: 0.72rem;
+      margin-bottom: 0.8rem;
+    }
+
+    h1 {
+      font-size: clamp(2.3rem, 5.8vw, 4.6rem);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-bottom: 1rem;
+    }
+
+    h1 .it {
+      font-family: 'EB Garamond', serif;
+      color: var(--sand);
+    }
+
+    .hero-copy {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1rem, 2.3vw, 1.45rem);
+      max-width: 700px;
+      color: var(--light);
+      line-height: 1.6;
+      margin-bottom: 2.2rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 2.4rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .filter-btn {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: transparent;
+      color: var(--mid);
+      padding: 0.58rem 0.9rem;
+      font-family: 'Syne Mono', monospace;
+      letter-spacing: 0.12em;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      color: var(--white);
+      border-color: rgba(255,255,255,0.34);
+    }
+
+    .filter-btn.active {
+      color: var(--black);
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0;
+      background: transparent;
+    }
+
+    .work-card {
+      grid-column: span 4;
+      background: transparent;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .work-card.hidden {
+      display: none;
+    }
+
+    .work-media {
+      width: 100%;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      border: none;
+      background: transparent;
+      padding: 0;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .work-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(.23,1,.32,1);
+    }
+
+    .work-media:hover img {
+      transform: scale(1.05);
+    }
+
+    .hover-chip {
+      position: absolute;
+      left: 0.8rem;
+      bottom: 0.8rem;
+      background: rgba(10,10,9,0.88);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      font-family: 'Syne Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.52rem;
+      padding: 0.36rem 0.48rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+    }
+
+    .work-media:hover .hover-chip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .empty-state {
+      display: none;
+      margin-top: 1.5rem;
+      color: var(--mid);
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 60;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      padding: 1.2rem;
+    }
+
+    .modal-shell {
+      width: min(1150px, 100%);
+      height: min(88vh, 900px);
+      background: #0b0b0a;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(310px, 0.85fr);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 0.8rem;
+      right: 1rem;
+      font-size: 2.2rem;
+      color: var(--white);
+      line-height: 1;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .modal-media {
+      background: #050505;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-media img {
+      width: 100%;
+      height: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .modal-panel {
+      padding: 4rem 2rem 1.8rem;
+      background: linear-gradient(180deg, rgba(22,22,20,0.98) 0%, rgba(10,10,9,0.98) 100%);
+      overflow-y: auto;
+    }
+
+    .modal-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1rem;
+    }
+
+    .modal-title {
+      font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+      line-height: 1.05;
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .modal-meta span {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.35rem 0.55rem;
+    }
+
+    .modal-copy {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--light);
+    }
+
+    @media (max-width: 980px) {
+      .work-card { grid-column: span 6; }
+    }
+
+    @media (max-width: 720px) {
+      nav { padding: 1rem 1.1rem; }
+      main { padding: 2rem 1rem 3rem; }
+      .work-card { grid-column: span 12; }
+      .modal-shell {
+        grid-template-columns: 1fr;
+        height: 92vh;
+      }
+      .modal-media img { max-height: 45vh; }
+      .modal-panel {
+        padding: 3.2rem 1rem 1.2rem;
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="/">JRRProjects</a>
+    <a class="nav-link" href="/">Back Home</a>
+  </nav>
+
+  <main>
+    <p class="hero-label">Portfolio Archive</p>
+    <h1>Selected <span class="it">works</span></h1>
+    <p class="hero-copy">Browse by category to see the pieces I've created over time: photography, flyers, design, and more. Hover over an image to preview the title, then click for a closer look!</p>
+
+    <div class="filters" id="filters" aria-label="Project categories"></div>
+
+    <section class="works-grid" id="worksGrid"></section>
+    <p class="empty-state" id="emptyState">No projects in this category yet.</p>
+  </main>
+
+  <div class="modal" id="imageModal">
+    <div class="modal-shell">
+      <span class="close" id="closeModal">&times;</span>
+      <div class="modal-media">
+        <img id="modalImg" alt="Selected project">
+      </div>
+      <aside class="modal-panel">
+        <p class="modal-label">Project Details</p>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <div class="modal-meta">
+          <span id="modalTag"></span>
+          <span id="modalMeta"></span>
+          <span id="modalYear"></span>
+        </div>
+        <div class="modal-copy" id="modalCopy"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    let projects = [];
+    let activeFilter = 'all';
+
+    const categoryLabels = {
+      photography: 'Photography',
+      flyers: 'Flyers',
+      design: 'Design',
+      cooking: 'Cooking',
+      nature: 'Nature'
+    };
+
+    const filters = document.getElementById('filters');
+    const worksGrid = document.getElementById('worksGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    function getCategories(items) {
+      return ['all', ...new Set(items.map(item => item.category))];
+    }
+
+    function prettyLabel(category) {
+      if (category === 'all') return 'All Projects';
+      return categoryLabels[category] || `${category.charAt(0).toUpperCase()}${category.slice(1)}`;
+    }
+
+    function renderFilters() {
+      const categories = getCategories(projects);
+      filters.innerHTML = categories
+        .map(category => `<button class="filter-btn ${category === activeFilter ? 'active' : ''}" data-filter="${category}">${prettyLabel(category)}</button>`)
+        .join('');
+
+      filters.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          activeFilter = button.dataset.filter;
+          renderFilters();
+          filterProjects(activeFilter);
+        });
+      });
+    }
+
+    function cardTemplate(project) {
+      return `
+        <article class="work-card" data-category="${project.category}">
+          <button class="work-media" type="button" aria-label="Open ${project.title}">
+            <img src="${project.image}" alt="${project.title}">
+            <span class="hover-chip">${project.title}</span>
+          </button>
+        </article>
+      `;
+    }
+
+    function renderProjects() {
+      worksGrid.innerHTML = projects.map(cardTemplate).join('');
+      document.querySelectorAll('.work-media').forEach((button, index) => {
+        button.addEventListener('click', () => openModal(projects[index]));
+      });
+    }
+
+    function filterProjects(category) {
+      const cards = document.querySelectorAll('.work-card');
+      let shown = 0;
+
+      cards.forEach(card => {
+        const shouldShow = category === 'all' || card.dataset.category === category;
+        card.classList.toggle('hidden', !shouldShow);
+        if (shouldShow) shown += 1;
+      });
+
+      emptyState.style.display = shown === 0 ? 'block' : 'none';
+    }
+
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTag = document.getElementById('modalTag');
+    const modalMeta = document.getElementById('modalMeta');
+    const modalYear = document.getElementById('modalYear');
+    const modalCopy = document.getElementById('modalCopy');
+
+    function openModal(project) {
+      modal.style.display = 'flex';
+      modalImg.src = project.image;
+      modalImg.alt = project.title;
+      modalTitle.textContent = project.title;
+      modalTag.textContent = project.tag;
+      modalMeta.textContent = project.meta;
+      modalYear.textContent = project.year;
+      modalCopy.textContent = project.description;
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      modalImg.src = '';
+    }
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeModal();
+    });
+
+    async function loadProjects() {
+      try {
+        const response = await fetch('/works/projects.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Unable to load projects data.');
+        projects = await response.json();
+      } catch (error) {
+        console.error(error);
+        projects = [];
+      }
+
+      renderFilters();
+      renderProjects();
+      filterProjects(activeFilter);
+    }
+
+    loadProjects();
+  </script>
+</body>
+</html>

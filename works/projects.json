@@ -1,0 +1,65 @@
+[
+  {
+    "title": "Mt. Fuji from New Mexico",
+    "tag": "Photography",
+    "meta": "Night photography",
+    "year": "2026",
+    "category": "photography",
+    "image": "/images/2.jpg",
+    "description": "A quiet nighttime study of illuminated panels and high-desert atmosphere. This scene balances installation lighting with open landscape mood."
+  },
+  {
+    "title": "Bondfire 2025",
+    "tag": "Flyers",
+    "meta": "Event poster",
+    "year": "2025",
+    "category": "flyers",
+    "image": "/images/Bondfire.png",
+    "description": "A playful event flyer designed for fast readability from a distance while still keeping personality in the character and color palette."
+  },
+  {
+    "title": "Spicy Padre Island Roll",
+    "tag": "Cooking",
+    "meta": "Food study",
+    "year": "2024",
+    "category": "cooking",
+    "image": "/images/3.jpg",
+    "description": "Food photography focused on texture and color contrast. The goal was to preserve freshness and craft without over-stylizing the image."
+  },
+  {
+    "title": "Crash Sticker",
+    "tag": "Design",
+    "meta": "Tribute sticker",
+    "year": "2026",
+    "category": "design",
+    "image": "/images/Crash Sticker.png",
+    "description": "A personal sticker design made to feel warm and graphic at the same time, honoring personality while still functioning clearly as a print piece."
+  },
+  {
+    "title": "Islander Peer Educator Recruitment Flyer",
+    "tag": "Flyers",
+    "meta": "Campus outreach",
+    "year": "2025",
+    "category": "flyers",
+    "image": "/images/5.png",
+    "description": "A recruitment flyer built for hierarchy-first communication so key details land quickly for students scanning information in busy spaces."
+  },
+  {
+    "title": "New Years Snow Day 2022",
+    "tag": "Nature",
+    "meta": "Winter landscape",
+    "year": "2022",
+    "category": "nature",
+    "image": "/images/4.jpeg",
+    "description": "A winter landscape captured to preserve stillness and soft tonal contrast. The composition highlights weather as an emotional shift in place."
+  },
+  {
+    "title": "Wild n Wacky Wednesday",
+    "tag": "Flyers",
+    "meta": "Event branding",
+    "year": "2025",
+    "category": "flyers",
+    "image": "/images/1.png",
+    "description": "A bright event design built around social energy and quick impact, balancing bold style with immediate access to event information."
+  }
+]

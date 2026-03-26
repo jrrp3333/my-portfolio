@@ -479,12 +479,22 @@
 
     /* Responsive Design - Media queries for mobile and tablet layouts */
     @media (max-width: 900px) {
-      nav { padding: 1.5rem; }
-      .nav-links { gap: 1.5rem; }
-      .hero { padding: 0 1.5rem 4rem; }
+      nav { padding: 1rem 1.1rem; }
+      .nav-logo { font-size: 1.05rem; letter-spacing: 0.2em; }
+      .nav-links { gap: 0.9rem; }
+      .nav-links a { font-size: 0.78rem; letter-spacing: 0.12em; }
+      .hero {
+        min-height: 100svh;
+        padding: calc(env(safe-area-inset-top, 0px) + 6.9rem) 1.5rem 4rem;
+      }
+      .hero-content { margin-top: 0; }
+      .hero-title { font-size: clamp(2rem, 9vw, 3.3rem); line-height: 1.02; }
+      .hero-bottom { margin-top: 2.4rem; }
+      .hero-desc { font-size: clamp(1.15rem, 5.6vw, 1.6rem); line-height: 1.45; }
       .hero-coords, .hero-index { display: none; }
-      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 1.35rem; }
       .hero-actions { align-items: flex-start; }
+      .btn-dark { font-size: 0.75rem; padding: 0.8rem 1.2rem; }
       .work { padding: 5rem 1.5rem; }
       .cell:nth-child(n) { grid-column: span 12; }
       .work-actions { justify-content: stretch; }
@@ -493,6 +503,24 @@
       .contact { padding: 5rem 1.5rem; }
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
       footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 0.85rem 0.8rem; }
+      .nav-logo { font-size: 0.86rem; letter-spacing: 0.14em; }
+      .nav-links { gap: 0.55rem; }
+      .nav-links a { font-size: 0.66rem; letter-spacing: 0.09em; }
+      .hero {
+        min-height: auto;
+        padding: calc(env(safe-area-inset-top, 0px) + 6.2rem) 1rem 3.2rem;
+      }
+      .hero-title { font-size: clamp(1.8rem, 8.7vw, 2.6rem); line-height: 1.04; }
+      .hero-desc { font-size: 1.02rem; line-height: 1.5; }
+      .hero-actions { width: 100%; }
+      .btn-dark { width: 100%; text-align: center; }
+      .work, .about, .contact { padding-left: 1rem; padding-right: 1rem; }
+      .strip-item { padding: 0 1.5rem; }
+      .foot-links { gap: 1rem; }
     }
 
     /* Modal Styles */
