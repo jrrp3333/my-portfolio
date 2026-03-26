@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Works | JRRProjects</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;500&family=Syne+Mono&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
@@ -323,7 +323,20 @@
     }
 
     @media (max-width: 720px) {
-      nav { padding: 1rem 1.1rem; }
+      nav {
+        padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1.1rem 1rem;
+        background: #0a0a09;
+        backdrop-filter: none;
+      }
+      nav::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(-1 * env(safe-area-inset-top, 0px));
+        height: env(safe-area-inset-top, 0px);
+        background: #0a0a09;
+      }
       main { padding: 2rem 1rem 3rem; }
       .work-card { grid-column: span 12; }
       .modal-shell {
