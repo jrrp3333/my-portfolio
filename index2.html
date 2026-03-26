@@ -508,6 +508,15 @@
         border-bottom: 1px solid var(--border);
         backdrop-filter: none;
       }
+      nav::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(-1 * env(safe-area-inset-top, 0px));
+        height: env(safe-area-inset-top, 0px);
+        background: #0a0a09;
+      }
       .nav-logo {
         font-family: 'Syne', sans-serif;
         font-size: 1.08rem;
