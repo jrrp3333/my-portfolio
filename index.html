@@ -499,21 +499,14 @@
       body, a, button, .form-btn, .cell-img { cursor: auto; }
       #cur, #cur-ring { display: none; }
       nav {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
         padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1.1rem 1rem;
         background: #0a0a09;
         border-bottom: 1px solid var(--border);
         backdrop-filter: none;
-      }
-      nav::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: calc(-1 * env(safe-area-inset-top, 0px));
-        height: env(safe-area-inset-top, 0px);
-        background: #0a0a09;
       }
       .nav-logo {
         font-family: 'Syne', sans-serif;
@@ -523,10 +516,10 @@
       }
       .nav-links { gap: 0.8rem; flex-wrap: nowrap; }
       .nav-links li + li { padding-left: 0.9rem; }
-      .nav-links a { font-size: 0.98rem; letter-spacing: 0.1em; }
+      .nav-links a { font-size: 1.06rem; letter-spacing: 0.1em; }
       .hero {
         min-height: 100svh;
-        padding: 2.4rem 1.5rem 4rem;
+        padding: calc(env(safe-area-inset-top, 0px) + 7.8rem) 1.5rem 4rem;
       }
       .hero-content { margin-top: 0; }
       .hero-title { font-size: clamp(2rem, 9vw, 3.3rem); line-height: 1.02; }
@@ -554,10 +547,10 @@
       .nav-logo { font-size: 0.98rem; letter-spacing: 0.14em; }
       .nav-links { gap: 0.42rem; }
       .nav-links li + li { padding-left: 0.72rem; }
-      .nav-links a { font-size: 0.84rem; letter-spacing: 0.06em; }
+      .nav-links a { font-size: 0.92rem; letter-spacing: 0.06em; }
       .hero {
         min-height: auto;
-        padding: 2rem 1rem 3.2rem;
+        padding: calc(env(safe-area-inset-top, 0px) + 7.2rem) 1rem 3.2rem;
       }
       .hero-title { font-size: clamp(1.8rem, 8.7vw, 2.6rem); line-height: 1.04; }
       .hero-desc { font-size: 1.02rem; line-height: 1.5; }
