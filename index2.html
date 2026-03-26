@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JRRProjects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;500&family=Syne+Mono&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Reset */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* CSS Custom Properties (Variables) */
+    :root {
+      --black: #0a0a09;
+      --green:   #244d29;
+      --dark:    #111110;
+      --surface: #161614;
+      --border:  rgba(255,255,255,0.07);
+      --mid:     #c5c5af;
+      --light:   #c8c4b8;
+      --white:   #f0ede8;
+      --sand:    #c4a882;
+      --teal:    #5c9e94;
+    }
+
+    /* HTML Styles */
+    html { scroll-behavior: smooth; }
+
+    /* Body Styles */
+    body {
+      background: var(--green);
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* Custom Cursor - Custom mouse pointer with dot and ring */
+    #cur {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+    }
+    #cur-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(92,158,148,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    body:has(a:hover) #cur-ring,
+    body:has(button:hover) #cur-ring {
+      width: 52px; height: 52px;
+      border-color: var(--teal);
+    }
+
+    /* Noise Texture Overlay - Subtle background noise effect */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Navigation Bar - Fixed header with logo and links */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,9,0.95) 0%, transparent 100%);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-decoration: none;
+      color: var(--white);
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+    .nav-links a {
+      font-family: 'Syne Mono', monospace;
+      font-size: 1.5rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--mid);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* Hero Section - Main landing area with title, description, and call-to-action */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 4rem 3rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(92,158,148,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(196,168,130,0.05) 0%, transparent 60%);
+    }
+
+    .hero-coords {
+      position: absolute;
+      top: 7rem; right: 3rem;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--mid);
+      text-align: right;
+      line-height: 2;
+      opacity: 0;
+      animation: fadeIn 1s 1.2s forwards;
+    }
+
+    .hero-index {
+      position: absolute;
+      top: 7rem; left: 3rem;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--mid);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: fadeIn 1s 1.4s forwards;
+    }
+
+    .hero-content { position: relative; z-index: 2; margin-top: -2rem; }
+
+    .hero-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.4s forwards;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 5.5vw, 6rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: 0em;
+      opacity: 0;
+      animation: fadeUp 1s 0.55s forwards;
+    }
+
+    .hero-title .it {
+      font-family: 'EB Garamond', Georgia, serif;
+      /* font-style: italic; */
+      font-weight: 400;
+      color: var(--light);
+    }
+
+    .hero-title .ac { color: var(--sand); }
+
+    .hero-bottom {
+      margin-top: 4.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      opacity: 0;
+      animation: fadeUp 1s 0.8s forwards;
+    }
+
+    .hero-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      /* font-style: italic; */
+      line-height: 1.7;
+      color: var(--mid);
+      max-width: 555px;
+    }
+
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+
+    .btn-dark {
+      font-family: 'Syne Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--white);
+      background: var(--black);
+      padding: 0.9rem 2rem;
+      transition: background 0.3s, transform 0.3s;
+      display: inline-block;
+    }
+    .btn-dark:hover { background: var(--teal); transform: translateY(-2px); }
+
+    .btn-line {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--mid);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .btn-line:hover { color: var(--white); border-color: var(--white); }
+
+    /* Marquee Strip - Animated scrolling text banner */
+    .strip {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      background: var(--surface);
+    }
+    .strip-inner {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: marquee 25s linear infinite;
+    }
+    .strip-item {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 0 2.5rem;
+    }
+    .strip-dot { color: var(--teal); }
+
+    /* Work Section - Portfolio projects display */
+    .work { padding: 8rem 3rem; }
+
+    .sec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 3rem;
+      margin-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sec-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1rem;
+    }
+
+    .sec-title { font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 300; line-height: 1.1; }
+    .sec-title .it { font-family: 'EB Garamond', serif; /* font-style: italic; */; color: var(--light); }
+
+    .sec-meta {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--mid);
+      letter-spacing: 0.1em;
+      text-align: right;
+    }
+
+    /* Work Grid - CSS Grid layout for project thumbnails */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .cell { background: var(--black); position: relative; overflow: hidden; }
+    .cell:nth-child(1) { grid-column: span 8; }
+    .cell:nth-child(2) { grid-column: span 4; }
+    .cell:nth-child(3) { grid-column: span 4; }
+    .cell:nth-child(4) { grid-column: span 4; }
+    .cell:nth-child(5) { grid-column: span 4; }
+    .cell:nth-child(6) { grid-column: span 7; }
+    .cell:nth-child(7) { grid-column: span 5; }
+
+    .cell-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; position: relative; }
+    .cell:nth-child(1) .cell-img,
+    .cell:nth-child(6) .cell-img { aspect-ratio: 16/9; }
+
+    .cell-ph {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(.23,1,.32,1);
+    }
+    .cell:hover .cell-ph { transform: scale(1.04); }
+
+    .cell:nth-child(1) .cell-ph { background: #1a1610; }
+    .cell:nth-child(2) .cell-ph { background: #0d1a18; }
+    .cell:nth-child(3) .cell-ph { background: #141a14; }
+    .cell:nth-child(4) .cell-ph { background: #1a1510; }
+    .cell:nth-child(5) .cell-ph { background: #0e1418; }
+    .cell:nth-child(6) .cell-ph { background: #181412; }
+    .cell:nth-child(7) .cell-ph { background: #121816; }
+
+    .cell-ph-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.18);
+      text-transform: uppercase;
+    }
+
+    .cell-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,9,0.85) 0%, transparent 50%);
+      padding: 1.5rem;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .cell:hover .cell-overlay { opacity: 1; }
+
+    .cell-img { cursor: pointer; }
+
+    .cell-info {
+      padding: 1.2rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .cell-title { font-size: 0.95rem; font-weight: 400; letter-spacing: 0.02em; }
+    .cell-tag { font-family: 'Syne Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); }
+
+    /* About Section - Personal biography and skills list */
+    .about {
+      padding: 8rem 3rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-photo {
+      width: 100%; aspect-ratio: 2/3;
+      background: #111210;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.8rem;
+      position: relative; overflow: hidden;
+      box-shadow: 0 16px 48px 0 rgba(0,0,0,0.85), 0 2px 8px 0 rgba(92,158,148,0.18);
+      border-radius: 0;
+    }
+
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 0;
+      box-shadow: 0 16px 48px 0 rgba(0,0,0,0.85), 0 2px 8px 0 rgba(92,158,148,0.18);
+    }
+
+    .about-photo span {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.2);
+    }
+
+    .about-tag-block {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.2rem 1.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .about-tag-block p { font-family: 'Syne Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; color: var(--teal); }
+
+    .about-right { padding-top: 1rem; }
+
+    .about-heading { font-size: clamp(2rem, 3.5vw, 3.2rem); font-weight: 300; line-height: 1.1; margin-bottom: 2.5rem; }
+    .about-heading .it { font-family: 'EB Garamond', serif; color: var(--sand); }
+
+    .about-body { font-family: 'EB Garamond', serif; font-size: 1.2rem; line-height: 1.9; color: var(--light); }
+    .about-body p + p { margin-top: 1.4rem; }
+    .about-body em { font-style: italic; color: var(--white); }
+
+    .locations { margin-top: 3.5rem; border-top: 1px solid var(--border); }
+
+    .loc-item {
+      display: flex; align-items: baseline; gap: 1.5rem;
+      padding: 1.1rem 0; border-bottom: 1px solid var(--border);
+    }
+    .loc-year { font-family: 'Syne Mono', monospace; font-size: 0.6rem; color: var(--teal); letter-spacing: 0.1em; min-width: 60px; }
+    .loc-place { font-size: 0.9rem; font-weight: 400; letter-spacing: 0.05em; }
+    .loc-note { font-family: 'EB Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--mid); margin-left: auto; }
+
+    .interests { margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .tag {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--mid); border: 1px solid var(--border); padding: 0.4rem 0.9rem;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .tag:hover { color: var(--teal); border-color: var(--teal); }
+
+    /* Contact Section - Contact form for inquiries */
+    .contact { padding: 8rem 3rem; border-top: 1px solid var(--border); }
+
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8rem; align-items: start; }
+
+    .contact-title { font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 300; line-height: 1.0; margin-top: 2rem; margin-bottom: 3rem; }
+    .contact-title .it { font-family: 'EB Garamond', serif; font-style: italic; color: var(--sand); }
+
+    .contact-note { font-family: 'EB Garamond', serif; font-style: italic; font-size: 1.1rem; color: var(--mid); line-height: 1.7; }
+
+    .form { display: flex; flex-direction: column; gap: 2rem; padding-top: 1rem; }
+    .field { display: flex; flex-direction: column; gap: 0.6rem; }
+    .field label { font-family: 'Syne Mono', monospace; font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--mid); }
+    .field input, .field textarea {
+      background: transparent; border: none; border-bottom: 1px solid var(--border);
+      padding: 0.8rem 0; font-family: 'EB Garamond', serif; font-size: 1.1rem;
+      color: var(--white); outline: none; transition: border-color 0.3s; resize: none;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--mid); }
+    .field input:focus, .field textarea:focus { border-color: var(--teal); }
+    .field textarea { min-height: 110px; }
+
+    .form-btn {
+      align-self: flex-start;
+      font-family: 'Syne Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--white); background: var(--black); border: none; padding: 1rem 2.2rem;
+      cursor: none; transition: background 0.3s, transform 0.3s; margin-top: 0.5rem;
+    }
+    .form-btn:hover { background: var(--teal); transform: translateY(-2px); }
+
+    /* Footer - Copyright notice and social media links */
+    footer {
+      padding: 2.5rem 3rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .foot-copy { font-family: 'Syne Mono', monospace; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--mid); }
+    .foot-links { display: flex; gap: 2rem; list-style: none; }
+    .foot-links a { font-family: 'Syne Mono', monospace; font-size:.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; color: var(--mid); transition: color 0.3s; }
+    .foot-links a:hover { color: var(--white); }
+
+    /* Keyframe Animations - Fade in effects and marquee animation */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Scroll Reveal - Intersection Observer for element animations */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.9s cubic-bezier(.23,1,.32,1), transform 0.9s cubic-bezier(.23,1,.32,1); }
+    .reveal.on { opacity: 1; transform: none; }
+
+    /* Responsive Design - Media queries for mobile and tablet layouts */
+    @media (max-width: 900px) {
+      nav { padding: 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { padding: 0 1.5rem 4rem; }
+      .hero-coords, .hero-index { display: none; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+      .hero-actions { align-items: flex-start; }
+      .work { padding: 5rem 1.5rem; }
+      .cell:nth-child(n) { grid-column: span 12; }
+      .about { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+      .contact { padding: 5rem 1.5rem; }
+      .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .modal-shell {
+      position: relative;
+      width: min(1180px, 100%);
+      height: min(88vh, 900px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
+      background: #0b0b0a;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+
+    .modal-media {
+      background: #050505;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-content {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .modal-panel {
+      padding: 4.5rem 2.4rem 2.4rem;
+      background: linear-gradient(180deg, rgba(22,22,20,0.98) 0%, rgba(10,10,9,0.98) 100%);
+      border-left: none;
+      overflow: hidden;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.1rem;
+    }
+
+    .modal-title {
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.02;
+      margin-bottom: 1.25rem;
+      color: var(--white);
+    }
+
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .modal-meta span {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mid);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.45rem 0.7rem;
+    }
+
+    .modal-copy {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.18rem;
+      line-height: 1.8;
+      color: var(--light);
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 1rem;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.35) rgba(255,255,255,0.06);
+    }
+
+    .modal-copy::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .modal-copy::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+    }
+
+    .modal-copy::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.36);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .modal-copy::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.5);
+      background-clip: padding-box;
+    }
+
+    .modal-copy p + p {
+      margin-top: 1rem;
+    }
+
+    img[src$="Crash Sticker.png"] {
+      clip-path: inset(0 2px 0 0);
+    }
+
+    .close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 5;
+      line-height: 1;
+    }
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .modal { padding: 1rem; }
+      .modal-shell {
+        grid-template-columns: 1fr;
+        height: 92vh;
+      }
+      .modal-media { padding: 1rem; }
+      .modal-content { max-height: 46vh; }
+      .modal-panel {
+        padding: 4rem 1.25rem 1.5rem;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <nav>
+    <a href="#" class="nav-logo">JRRProjects</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-horizon"></div>
+    <p class="hero-index"></p>
+    <div class="hero-content">
+      
+      <h1 class="hero-title">
+        Find a job you enjoy doing, and you will never have to work a day in your life.</span><br>
+        <span class="ac">Confucius</span>
+      </h1>
+      <div class="hero-bottom">
+        <p class="hero-desc">
+          Exploring the world through a lens shaped by desert earth,
+          Pacific water, and Gulf sky.
+        </p>
+        <div class="hero-actions">
+          <a href="#work" class="btn-dark">View Work</a>
+          <a href="#contact" class="btn-dark">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="strip-inner">
+      <span class="strip-item">Photography</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Visual Design</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Cooking</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Nature</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Science</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">San Ildefonso Pueblo</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Corpus Christi</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Photography</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Visual Design</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Cooking</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Nature</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Science</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">San Ildefonso Pueblo</span><span class="strip-item strip-dot">✦</span>
+      <span class="strip-item">Corpus Christi</span><span class="strip-item strip-dot">✦</span>
+    </div>
+  </div>
+
+  <section class="work" id="work">
+    <div class="sec-header reveal">
+      <div>
+        <h2 class="sec-title">Recent <span class="it">projects</span></h2>
+      </div>
+    </div>
+    <div class="grid">
+      <!-- Image Spot 1: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" data-project-title="Mt. Fuji from New Mexico" data-project-tag="Photography" data-project-meta="Night photography" data-project-year="2026" data-project-bio="A quiet nighttime study of illuminated panels and high-desert atmosphere. I liked how the scene felt both cinematic and handmade, with the glow of the lights pulling the eye through the path.||This image sits between installation photography and landscape storytelling. The goal was to preserve the scale of the work while still keeping the mood of the night intact.">
+        <div class="cell-img"><img src="images/2.jpg" alt="Mt. Fuji from New Mexico" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">Mt. Fuji from New Mexico</span><span class="cell-tag">Photography</span></div>
+      </div>
+      <!-- Image Spot 2: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.08s" data-project-title="Bondfire 2025" data-project-tag="Design" data-project-meta="Event poster" data-project-year="2025" data-project-bio="This piece was designed to feel playful, readable, and immediate from a distance. The forest scene and character illustration were used to make the event feel welcoming instead of overly formal.||The main design problem here was balancing a lot of event information while keeping the poster visually fun. I used large type, warm colors, and a centered composition so the details could be read quickly.">
+        <div class="cell-img"><img src="images/Bondfire.png" alt="Bondfire 2025" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">Bondfire 2025</span><span class="cell-tag">Design</span></div>
+      </div>
+      <!-- Image Spot 3: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.12s" data-project-title="Spicy Padre Island Roll" data-project-tag="Cooking" data-project-meta="Food study" data-project-year="2024" data-project-bio="A close look at color, texture, and plating. This image came out of my interest in treating food the same way I treat visual design: every element needs structure, contrast, and intention.||The emphasis here is on appetite and craft. I wanted the roll to feel fresh and precise without losing the energy of the kitchen behind it.">
+        <div class="cell-img"><img src="images/3.jpg" alt="Spicy Padre Island Roll" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">Spicy Padre Island Roll</span><span class="cell-tag">Cooking</span></div>
+      </div>
+      <!-- Image Spot 4: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.16s" data-project-title="Crash Sticker" data-project-tag="Design" data-project-meta="Tribute sticker" data-project-year="2026" data-project-bio="A personal sticker design made in honor of my cat, Crash. I wanted the piece to carry some of his toughness and personality while still feeling warm, playful, and graphic enough to work as a clean sticker.">
+        <div class="cell-img"><img src="images/Crash Sticker.png" alt="Crash Sticker" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">Crash Sticker</span><span class="cell-tag">Design</span></div>
+      </div>
+      <!-- Image Spot 5: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.2s" data-project-title="Islander Peer Educator Recruitment Flyer" data-project-tag="Design" data-project-meta="Campus outreach" data-project-year="2025" data-project-bio="A recruitment flyer built to communicate clearly and move fast. The layout prioritizes hierarchy first, then personality, so the audience can understand the opportunity before they ever get to the smaller details.||Projects like this are less about decoration and more about usefulness. The design has to earn attention quickly and still feel like it belongs to the people it is speaking to.">
+        <div class="cell-img"><img src="images/5.png" alt="Islander Peer Educator Flyer" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">Islander Peer Educator Recruitment Flyer</span><span class="cell-tag">Design</span></div>
+      </div>
+      <!-- Image Spot 6: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.1s" data-project-title="New Years Snow Day 2022" data-project-tag="Nature" data-project-meta="Winter landscape" data-project-year="2022" data-project-bio="This photo is about stillness more than spectacle. The snowfall flattened the world into simple tones and shapes, which made the scene feel quiet in a way I wanted to preserve.||I was interested in how weather can completely change the emotional tone of a familiar place. The image leans into that softness instead of fighting it.">
+        <div class="cell-img"><img src="images/4.jpeg" alt="New Years Snow Day 2022" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+        <div class="cell-info"><span class="cell-title">New Years Snow Day 2022</span><span class="cell-tag">Nature</span></div>
+      </div>
+      <!-- Image Spot 7: Replace the .cell-ph div with your image -->
+      <div class="cell reveal" style="transition-delay:.18s" data-project-title="Wild n Wacky Wednesday" data-project-tag="Design" data-project-meta="Event branding" data-project-year="2025" data-project-bio="A bright event graphic built around energy and approachability. The design language is intentionally upbeat so the piece feels social, active, and easy to notice in a crowded student setting.||The strongest part of this kind of project is clarity under pressure. It needs to feel fun immediately while still guiding the viewer to the information that matters.">
+        <div class="cell-img"><img src="images/1.png" alt="Wild N Wacky" class="cell-ph project-img"><div class="cell-overlay"></div></div>
+          <div class="cell-info"><span class="cell-title">Wild n Wacky Wednesday</span><span class="cell-tag">Design</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="reveal">
+      <div class="about-photo">
+        <img src="images/36.jpg" alt="Your photo">
+        <div class="about-tag-block"><p>San Ildefonso Pueblo → Bellingham → Corpus Christi</p></div>
+      </div>
+    </div>
+    <div class="about-right reveal" style="transition-delay:.15s">
+      <p class="sec-label">About</p>
+      <h2 class="about-heading">Rooted in<br><span class="it">earth & water.</span></h2>
+      <div class="about-body">
+        <p>I grew up on San Ildefonso Pueblo in New Mexico, raised on wide sky, red earth, and the kind of quiet that teaches you to look closely. That attention to detail never left me.</p>
+        <p>After graduation I moved to Bellingham, Washington, spent a year making sushi and learning that <em>cooking is design</em>, from precision, texture, color, and intention. Then south to Corpus Christi, where the Gulf opens up and the light hits different.</p>
+        <p>I shoot food, nature, and the spaces in between. I design with the same mindset of clean, considerate, and always rooted in something real.</p>
+      </div>
+      <div class="locations">
+        <div class="loc-item"><span class="loc-year">Origin</span><span class="loc-place">San Ildefonso Pueblo, NM</span><span class="loc-note">Where it started</span></div>
+        <div class="loc-item"><span class="loc-year">2020</span><span class="loc-place">Bellingham, WA</span><span class="loc-note">Sushi & the Pacific Northwest</span></div>
+        <div class="loc-item"><span class="loc-year">Now</span><span class="loc-place">Corpus Christi, TX</span><span class="loc-note">Gulf air & open water</span></div>
+      </div>
+      <div class="interests">
+        <span class="tag">Photography</span><span class="tag">Cooking</span><span class="tag">Visual Design</span>
+        <span class="tag">Science</span><span class="tag">Nature</span><span class="tag">Ocean</span>
+        <span class="tag">New Mexico</span><span class="tag">Activism</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="reveal">
+        <p class="sec-label">Contact</p>
+        <h2 class="contact-title">Let's make<br><span class="it">something</span><br>real.</h2>
+        <p class="contact-note">Open for photography commissions,<br>design projects, and collaborations.</p>
+      </div>
+      <form class="form reveal" id="contactForm" style="transition-delay:.15s">
+        <div class="field"><label>Name</label><input type="text" name="name" placeholder="Your name" required/></div>
+        <div class="field"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required/></div>
+        <div class="field"><label>Message</label><textarea name="message" placeholder="Tell me about your project…" required></textarea></div>
+        <button class="form-btn" type="submit">Send Message</button>
+        <div id="formStatus" style="margin-top:1rem;font-family:'Syne Mono',monospace;font-size:0.9rem;"></div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p class="foot-copy">© 2026 JRRProjects · All rights reserved.</p>
+    <ul class="foot-links">
+      <li><a href="https://www.instagram.com/jrrprojects?igsh=bmdvdWR6NGR3MTgz&utm_source=qr" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+      <li><a href="https://www.linkedin.com/in/justin-pena-942264228/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    const cur = document.getElementById('cur');
+    const ring = document.getElementById('cur-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    });
+    (function tick() {
+      rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(tick);
+    })();
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Contact form submission
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+    if (contactForm) {
+      contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        formStatus.textContent = 'Sending...';
+        const formData = new FormData(contactForm);
+        const data = Object.fromEntries(formData.entries());
+        try {
+          const res = await fetch('/.netlify/functions/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await res.json();
+          if (result.success) {
+            formStatus.textContent = 'Message sent! Thank you.';
+            contactForm.reset();
+          } else {
+            formStatus.textContent = 'Failed to send. Please try again.';
+          }
+        } catch (err) {
+          formStatus.textContent = 'Error sending message.';
+        }
+      });
+    }
+
+    // Modal functions for image expansion
+    function openModal(project) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImg');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalTag = document.getElementById('modalTag');
+      const modalMeta = document.getElementById('modalMeta');
+      const modalYear = document.getElementById('modalYear');
+      const modalCopy = document.getElementById('modalCopy');
+      modal.style.display = 'flex';
+      modalImg.src = project.src;
+      modalImg.alt = project.title;
+      modalTitle.textContent = project.title;
+      modalTag.textContent = project.tag;
+      modalMeta.textContent = project.meta;
+      modalYear.textContent = project.year;
+      const paragraphs = project.bio
+        .split('||')
+        .map(paragraph => `<p>${paragraph.trim()}</p>`)
+        .join('');
+      modalCopy.innerHTML = paragraphs;
+      modalCopy.scrollTop = 0;
+      setTimeout(() => { modal.classList.add('active'); }, 10); // for transition
+    }
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      modal.style.display = 'none';
+      modal.classList.remove('active');
+      document.getElementById('modalImg').src = '';
+    }
+
+    // Make the full image area clickable for each project card.
+    document.querySelectorAll('.cell-img').forEach(container => {
+      container.addEventListener('click', function() {
+        const img = container.querySelector('.project-img');
+        const card = container.closest('.cell');
+        if (!img || !card) return;
+        openModal({
+          src: img.src,
+          title: card.dataset.projectTitle || img.alt,
+          tag: card.dataset.projectTag || 'Project',
+          meta: card.dataset.projectMeta || 'Featured work',
+          year: card.dataset.projectYear || '2026',
+          bio: card.dataset.projectBio || 'More information about this work can go here.'
+        });
+      });
+    });
+
+    // Close modal on overlay click (but not image)
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal-shell">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="modal-media">
+        <img class="modal-content" id="modalImg">
+      </div>
+      <aside class="modal-panel">
+        <p class="modal-label">Project Details</p>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <div class="modal-meta">
+          <span id="modalTag"></span>
+          <span id="modalMeta"></span>
+          <span id="modalYear"></span>
+        </div>
+        <div class="modal-copy" id="modalCopy"></div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

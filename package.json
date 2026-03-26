@@ -1,0 +1,15 @@
+{
+  "name": "my-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio site configured for Netlify hosting",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.4"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.37.0"
+  }
+}
